@@ -3,8 +3,10 @@ import telebot
 import flask
 
 TOKEN = os.getenv("BOT_TOKEN")
-bot = telebot.TeleBot(TOKEN)
+if not TOKEN:
+    raise ValueError("Vui lòng đặt biến môi trường BOT_TOKEN!")
 
+bot = telebot.TeleBot(TOKEN)
 app = flask.Flask(__name__)
 
 @app.route('/' + TOKEN, methods=['POST'])
@@ -19,11 +21,10 @@ def webhook():
     return "Bot đang chạy Webhook!", 200
 
 def set_webhook():
-    TOKEN = os.getenv("BOT_TOKEN")
-webhook_url = f"https://checkfreefire.onrender.com/{TOKEN}"
-
+    webhook_url = f"https://checkfreefire.onrender.com/{TOKEN}"
     bot.remove_webhook()
     bot.set_webhook(url=webhook_url)
+    print(f"Webhook đã được thiết lập tại {webhook_url}")
 
 if __name__ == '__main__':
     set_webhook()
