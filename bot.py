@@ -19,8 +19,9 @@ def webhook():
     return "Bot đang chạy Webhook!", 200
 
 def set_webhook():
-    webhook_url = f"https://checkfreefire.onrender.com/{8127007530:AAG1b4w__xXvIrAr7woZjN8BrC_l3g1hBwI
-}"
+    TOKEN = os.getenv("BOT_TOKEN")
+webhook_url = f"https://checkfreefire.onrender.com/{TOKEN}"
+
     bot.remove_webhook()
     bot.set_webhook(url=webhook_url)
 
