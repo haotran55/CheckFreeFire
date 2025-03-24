@@ -52,12 +52,18 @@ async def main():
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
     await app.run_polling()
 
-if __name__ == "__main__":
-    import asyncio
+import asyncio
 
+if __name__ == "__main__":
     try:
-        asyncio.run(main())  # Chạy bot với asyncio.run nếu có thể
-    except RuntimeError:  # Nếu event loop đã chạy
-        loop = asyncio.get_event_loop()
-        loop.create_task(main())  # Chạy main() bằng create_task để tránh xung đột
-        loop.run_forever()  # Giữ chương trình chạy
+        # Kiểm tra xem event loop đã chạy chưa
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        # Nếu chưa có event loop, tạo mới và chạy bot
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(main())
+    else:
+        # Nếu đã có event loop, chạy main() như một task async
+        loop.create_task(main())
+        loop.run_forever()
