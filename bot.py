@@ -24,23 +24,35 @@ async def taixiu(update: Update, context: CallbackContext):
 async def create_file(update: Update, context: CallbackContext):
     file_name = "bot_output.txt"
     with open(file_name, "w") as file:
-        file.write("Đây là nội dung của file được tạo bởi bot.")
-    await update.message.reply_text("File đã được tạo thành công!")
+        file.write("Đây là file được tạo bởi bot Telegram.\n")
+    await update.message.reply_document(document=open(file_name, "rb"))
+    os.remove(file_name)
+
+async def check_uid_ff(update: Update, context: CallbackContext):
+    if not context.args:
+        await update.message.reply_text("Vui lòng nhập UID Free Fire! Ví dụ: /checkuid 123456789")
+        return
+    uid = context.args[0]
+    url = f"http://minhnguyen3004.x10.mx/checkuid?uid={uid}"  # API giả định, cần thay bằng API thật
+    try:
+        response = requests.get(url)
+        data = response.json()
+        if "error" in data:
+            await update.message.reply_text("UID không hợp lệ hoặc không tồn tại.")
+        else:
+            await update.message.reply_text(f"Thông tin UID {uid}: {data}")
+    except Exception as e:
+        await update.message.reply_text("Lỗi khi kiểm tra UID. Vui lòng thử lại sau!")
 
 async def main():
     app = Application.builder().token(TOKEN).build()
-    
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
     app.add_handler(CommandHandler("taixiu", taixiu))
+    app.add_handler(CommandHandler("checkuid", check_uid_ff, pass_args=True))
     app.add_handler(CommandHandler("createfile", create_file))
-    
-    print("Bot đang chạy...")
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
+    print("Bot đã khởi chạy...")
     await app.run_polling()
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except RuntimeError as e:
-        if str(e) != "Event loop is closed":
-            raise
+    asyncio.run(main())
