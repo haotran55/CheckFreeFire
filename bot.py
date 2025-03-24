@@ -1,33 +1,29 @@
 import os
 import telebot
-import sqlite3
-from flask import Flask
-from threading import Thread
+import flask
 
-# Lấy token từ biến môi trường để bảo mật
-TOKEN = os.getenv("BOT_TOKEN", "")
-if not TOKEN:
-    raise ValueError("Vui lòng đặt biến môi trường BOT_TOKEN")
-
+TOKEN = os.getenv("BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN)
-app = Flask(__name__)
+
+app = flask.Flask(__name__)
+
+@app.route('/' + TOKEN, methods=['POST'])
+def getMessage():
+    json_str = flask.request.get_data().decode('UTF-8')
+    update = telebot.types.Update.de_json(json_str)
+    bot.process_new_updates([update])
+    return '!', 200
 
 @app.route('/')
-def home():
-    return "Bot đang chạy!"
+def webhook():
+    return "Bot đang chạy Webhook!", 200
 
-def run_flask():
+def set_webhook():
+    webhook_url = f"https://checkfreefire.onrender.com/{8127007530:AAG1b4w__xXvIrAr7woZjN8BrC_l3g1hBwI
+}"
+    bot.remove_webhook()
+    bot.set_webhook(url=webhook_url)
+
+if __name__ == '__main__':
+    set_webhook()
     app.run(host='0.0.0.0', port=8080)
-
-# Chạy Flask trên một luồng riêng để không chặn bot
-Thread(target=run_flask, daemon=True).start()
-
-# Hàm xử lý tin nhắn
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    bot.reply_to(message, "Chào mừng bạn! Bot đang hoạt động.")
-
-# Khởi chạy bot
-if __name__ == "__main__":
-    print("Bot đang chạy...")
-    bot.infinity_polling()
