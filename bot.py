@@ -48,7 +48,7 @@ async def main():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("taixiu", taixiu))
-    app.add_handler(CommandHandler("checkuid", check_uid_ff, pass_args=True))
+    app.add_handler(CommandHandler("checkuid", check_uid_ff))
     app.add_handler(CommandHandler("createfile", create_file))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
     print("Bot đã khởi chạy...")
