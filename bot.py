@@ -28,8 +28,9 @@ async def create_file(update: Update, context: CallbackContext):
     await update.message.reply_document(document=open(file_name, "rb"))
     os.remove(file_name)
 
-async def check_uid_ff(update: Update, context: CallbackContext):
-    if not context.args:
+async def check_uid_ff(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    args = context.args  # Lấy danh sách các đối số
+    # Xử lý lệnh với args
         await update.message.reply_text("Vui lòng nhập UID Free Fire! Ví dụ: /checkuid 123456789")
         return
     uid = context.args[0]
