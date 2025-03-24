@@ -30,7 +30,7 @@ async def create_file(update: Update, context: CallbackContext):
 
 async def check_uid_ff(update: Update, context: ContextTypes.DEFAULT_TYPE):
     args = context.args  # Lấy danh sách các đối số
-    # Xử lý lệnh với args
+    if not args:
         await update.message.reply_text("Vui lòng nhập UID Free Fire! Ví dụ: /checkuid 123456789")
         return
     uid = context.args[0]
