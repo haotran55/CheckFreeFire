@@ -54,6 +54,10 @@ async def main():
 
 if __name__ == "__main__":
     import asyncio
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
 
+    try:
+        asyncio.run(main())  # Chạy bot với asyncio.run nếu có thể
+    except RuntimeError:  # Nếu event loop đã chạy
+        loop = asyncio.get_event_loop()
+        loop.create_task(main())  # Chạy main() bằng create_task để tránh xung đột
+        loop.run_forever()  # Giữ chương trình chạy
